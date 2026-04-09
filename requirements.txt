@@ -1,9 +1,10 @@
-requests>=2.31.0
-python-dotenv>=1.0.0
+# Core System Dependencies 
+requests>=2.31.0          # Used by chat_service and model_service for API calls
+python-dotenv>=1.0.0      # Used in main.py for environment configuration
 
-# Optional: For voice output
-pyttsx3>=2.90
+# Service: UI & Console 
+# (Uses standard library 'os' and 'sys', no extra pip packages needed)
 
-# Optional: For voice input
-SpeechRecognition>=3.10.0
-pyaudio>=0.2.13  # May require system-level audio libraries
+# Development & Testing 
+# (Recommended for the monorepo workflow)
+pytest>=7.0.0             # To run unit tests against individual services
