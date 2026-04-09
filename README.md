@@ -1,161 +1,66 @@
-## Quick Start
+# LM Studio CLI Agent
 
-```bash
-pip install -r requirements.txt
-$env:OPENAI_API_KEY="your_api_key_here"
-python main.py
+A lightweight CLI agent for chatting with local LLM models via LM Studio.
 
-This helps someone run your project in 10 seconds. People notice that.
+## Setup
 
----
-
-## 2. Check your repo looks clean
-
-In VS Code (Explorer), you should have:
-
-- `main.py`  
-- `README.md`  
-- `ISSUES.md`  
-- `requirements.txt`  
-- `.gitignore`  
-- `venv/` (but NOT pushed to GitHub)
-
-👉 If `venv` is on GitHub, your `.gitignore` didn’t work—tell me, we’ll fix it.
-
----
-
-## 3. What your repo now communicates
-
-Without you saying anything, it shows:
-
-- You can structure a project  
-- You understand input → processing → output  
-- You faced real issues and documented them  
-- You know basic Git discipline  
-
-That’s exactly what your head is evaluating.
-
----
-
-## 4. If they ask you to explain (keep it simple)
-
-Say this, calmly:
-
-> “I built a CLI-based agent that takes meeting notes as input and uses an LLM to generate structured summaries and action items.  
-> I focused on clearly defining the processing flow and documenting the issues I faced during development.”
-
-That’s enough. Don’t over-explain.
-
----
-
-If you want, I can now:
-- review your actual GitHub repo (line by line)
-- or help you add **one more feature** to make it stand out
-
-
-# MEETING AGENT CLI
-
-Python OpenAI CLI Tool
-
-A lightweight agentic CLI application that converts unstructured meeting notes into structured summaries and actionable insights using LLMs.
-
-
-## Overview
-
-This project demonstrates a simplified agent pipeline built using OpenAI.  
-It follows a clear **input → processing → output** architecture and is designed as a foundation for building production-grade AI assistants.
-
-
-## Architecture
-
-The system follows a linear agent pipeline:
-
-User Input (CLI)
-        ↓
-LLM Processing (OpenAI)
-        ↓
-Structured Output (Summary + Action Items)
-
-
-## Core Flow
-
-1. User enters raw meeting notes via CLI  
-2. Input is sent to OpenAI model  
-3. Model processes:
-   - Summarization  
-   - Action item extraction  
-4. Structured response is returned to user  
-
-
-## Project Structure
-cli-agent/
-├── main.py CLI entry point
-├── requirements.txt Dependencies
-├── README.md Documentation
-├── ISSUES.md Development issues and learnings
-└── .gitignore Ignored files
+1. **Install LM Studio** from https://lmstudio.ai/
+2. **Download & load a model** in LM Studio
+3. **Start Local Server** (port 1234)
+4. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+5. **Run the agent**:
+   ```bash
+   python main.py
+   ```
 
 ## Features
 
-- CLI-based interaction  
-- Real-time LLM processing  
-- Structured output generation  
-- Clean input → processing → output pipeline  
+- ✅ Multi-turn conversations with history
+- ✅ Model selection and switching
+- ✅ Session tracking (messages, time, model)
+- ✅ Colorized terminal output
+- ✅ Local execution (no cloud API needed)
 
+## Commands
 
-## Tech Stack
+| Command | Description |
+|---------|-------------|
+| `clear` | Clear conversation history |
+| `models` | List available models |
+| `model` | Switch to different model |
+| `info` | Show session info |
+| `quit` | Exit agent |
 
-- Python  
-- OpenAI API  
-- CLI Interface  
+## Configuration
 
+Edit `.env` to customize:
+```
+LM_STUDIO_URL=http://127.0.0.1:1234
+```
 
-## Setup & Run
+## Troubleshooting
 
-pip install -r requirements.txt
+- **Cannot connect**: Make sure LM Studio is running and local server is started
+- **No models found**: Download and load a model in LM Studio first
+- **Slow responses**: Enable GPU in LM Studio settings or use a smaller model
 
+## Example Usage
 
-### Set API key (PowerShell)
+```
+You: Hello! What is Python?
+🤔 Thinking...
+Agent: Python is a high-level programming language...
 
+You: models
+Models:
+  ✓ mistral-7b
+    llama2-13b
 
-$env:OPENAI_API_KEY="your_api_key_here"
+You: quit
+👋 Goodbye!
+```
 
-
-### Run the agent
-
-
-python main.py
-
-
-## Example
-
-Input:
-
-Output:
-
-## Issues & Learnings
-
-See `ISSUES.md` for real development challenges faced during implementation.
-
-
-
-## Future Scope
-
-- Multi-agent architecture (planner + executor)  
-- Integration with Slack / Notion  
-- Persistent memory  
-- Web-based interface  
-
----
-
-## Design Principles
-
-- Clear input → processing → output flow  
-- Minimal but extensible architecture  
-- Focus on clarity over complexity  
-
----
-
-## Status
-
-Initial CLI version under development
+See [SETUP.md](SETUP.md) for detailed setup instructions.
