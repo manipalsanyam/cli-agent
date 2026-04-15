@@ -1,18 +1,16 @@
-def send_chat(agent, prompt):
-    """prompt = f"""
-You are a strict classifier.
+from services.chat_service import get_chat_response
 
-Choose ONLY one label from:
+def classify_intent(agent, user_input):
+    prompt = f"""
+You are a customer support classifier.
+
+Classify the query into ONLY one:
 refund, late_delivery, wrong_item, complaint, general
 
-Rules:
-- Return only the label
-- No explanation
-- No sentence
+Return ONLY the label.
 
 Query: {user_input}
 """
-    if hasattr(agent, "send_chat") and callable(agent.send_chat):
-        return agent.send_chat(prompt)
 
-    raise AttributeError("Agent must implement a callable send_chat(prompt) method")
+    response = get_chat_response(agent, prompt)
+    return response.strip().lower()
