@@ -3,13 +3,53 @@ import os
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
-from services.ui_service import UIService
-from services.model_service import ModelService
-from services.chat_service import ChatService
+from services.ui_service import format_text, print_header as print_header_fn
+from services.servicesmodel_service import fetch_available_models, set_active_model
+from services.chat_service import get_chat_response
 
 load_dotenv()
 URL = os.getenv("LM_STUDIO_URL", "http://127.0.0.1:1234")
 HISTORY_PATH = Path(__file__).resolve().parent / "chat_history.json"
+
+
+class UIService:
+    def format(self, text: str, color_key: str = "E") -> str:
+        return format_text(text, color_key)
+
+    def print_header(self) -> None:
+        print_header_fn()
+
+
+class ModelService:
+    def __init__(self, base_url: str):
+        self.base_url = base_url
+        self.active_model = None
+
+    def fetch_available_models(self):
+        return fetch_available_models(self.base_url)
+
+    def set_active(self, model_name: str):
+        self.active_model = model_name
+
+
+class ChatService:
+    def __init__(self, base_url: str):
+        self.base_url = base_url
+        self.history = []
+        self.message_count = 0
+
+    def send_message(self, model: str, content: str) -> str:
+        agent = {"history": self.history}
+        response = get_chat_response(agent, content)
+        self.message_count += 1
+        return response
+
+    def get_session_info(self, active_model: str) -> str:
+        return (
+            f"Model: {active_model}\n"
+            f"Total messages: {len(self.history)}\n"
+            f"Assistant replies: {self.message_count}"
+        )
 
 
 def ensure_service_path():
@@ -179,5 +219,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-print("\n--- Processing Request ---")
