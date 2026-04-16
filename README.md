@@ -64,3 +64,14 @@ You: quit
 ```
 
 See [SETUP.md](SETUP.md) for detailed setup instructions.
+
+## Agent Flow
+
+The system follows an agentic pipeline:
+
+User Input  
+→ Intent Classification  
+→ Action Execution (data-driven)  
+→ LLM Response Generation  
+
+This enables the system to not only respond but also take simulated actions based on user queries.
