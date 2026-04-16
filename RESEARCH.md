@@ -127,3 +127,16 @@ Decision-making (action)
 Execution (simulated)
 
 Further work will focus on improving reliability and real-world integration.
+
+
+## Prompt Engineering for Reliability
+
+Intent classification is highly sensitive to prompt structure.
+
+Key observations:
+- Without constraints, LLMs return descriptive answers instead of labels
+- Adding strict rules improves determinism
+- Few-shot examples improve accuracy significantly
+
+Conclusion:
+Prompt engineering is critical for building reliable agent systems.
