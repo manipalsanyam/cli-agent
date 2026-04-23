@@ -4,45 +4,47 @@ import json
 import urllib.request
 import urllib.error
 
+base_url: str = ""
+active_model: str | None = None
+_cache: list[str] = []
 
-class ModelService:
-   
 
-    def __init__(self, base_url: str) -> None:
-        self.base_url     = base_url.rstrip("/")
-        self.active_model: str | None = None
-        self._cache:       list[str]  = []
+def init_model_service(url: str) -> None:
+    global base_url
+    base_url = url.rstrip("/")
 
-    
 
-    def fetch_available_models(self, force: bool = False) -> list[str]:
-        """
-        Return model IDs from the server.
-        Cached after first call; pass force=True to refresh.
-        """
-        if self._cache and not force:
-            return self._cache
+def fetch_available_models(force: bool = False) -> list[str]:
+    global _cache
 
-        url = f"{self.base_url}/v1/models"
-        try:
-            with urllib.request.urlopen(url, timeout=5) as resp:
-                data = json.loads(resp.read().decode())
-            self._cache = [m["id"] for m in data.get("data", [])]
-        except urllib.error.URLError as exc:
-            raise ConnectionError(
-                f"Cannot reach LM Studio at {self.base_url}: {exc.reason}"
-            ) from exc
-        except Exception as exc:
-            raise RuntimeError(f"Unexpected error fetching models: {exc}") from exc
+    if _cache and not force:
+        return _cache
 
-        return self._cache
+    url = f"{base_url}/v1/models"
+    try:
+        with urllib.request.urlopen(url, timeout=5) as resp:
+            data = json.loads(resp.read().decode())
+        _cache = [m["id"] for m in data.get("data", [])]
 
-    def set_active(self, model_name: str) -> None:
-        self.active_model = model_name
+    except urllib.error.URLError as exc:
+        raise ConnectionError(
+            f"Cannot reach LM Studio at {base_url}: {exc.reason}"
+        ) from exc
+    except Exception as exc:
+        raise RuntimeError(f"Unexpected error fetching models: {exc}") from exc
 
-    def is_available(self, model_name: str) -> bool:
-        return model_name in self.fetch_available_models()
+    return _cache
 
-    def summary(self) -> str:
-        status = self.active_model or "none selected"
-        return f"Active model : {status}\nServer URL   : {self.base_url}"
+
+def set_active(model_name: str) -> None:
+    global active_model
+    active_model = model_name
+
+
+def is_available(model_name: str) -> bool:
+    return model_name in fetch_available_models()
+
+
+def summary() -> str:
+    status = active_model or "none selected"
+    return f"Active model : {status}\nServer URL   : {base_url}"
