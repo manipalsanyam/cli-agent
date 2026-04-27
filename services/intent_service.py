@@ -1,58 +1,87 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
-from enum import Enum
+from typing import TypedDict
 
 
-class Intent(str, Enum):
-    GREETING   = "greeting"
-    FAREWELL   = "farewell"
-    HELP       = "help"
-    QUESTION   = "question"
-    COMMAND    = "command"
-    SMALL_TALK = "small_talk"
-    UNKNOWN    = "unknown"
+GREETING        = "greeting"
+FAREWELL        = "farewell"
+HELP            = "help"
+
+ORDER_STATUS    = "order_status"
+REFUND_REQUEST  = "refund_request"
+CANCEL_ORDER    = "cancel_order"
+COMPLAINT       = "complaint"
+ESCALATION      = "escalation"
+
+SMALL_TALK      = "small_talk"
+COMMAND         = "command"
+UNKNOWN         = "unknown"
 
 
-@dataclass
-class IntentResult:
-    intent:     Intent
-    confidence: float   # 0.0 – 1.0
-    raw_input:  str
+class IntentResult(TypedDict):
+    intent: str
+    confidence: float
+    raw_input: str
 
 
-_PATTERNS: list[tuple[re.Pattern[str], Intent, float]] = [
-    (re.compile(r"\b(hi|hello|hey|good\s?(morning|evening|afternoon))\b", re.I),
-     Intent.GREETING,   0.95),
 
-    (re.compile(r"\b(bye|goodbye|see\s?you|farewell|quit|exit)\b", re.I),
-     Intent.FAREWELL,   0.95),
+PATTERNS: list[tuple[re.Pattern[str], str, float]] = [
 
-    (re.compile(r"\b(help|how\s?to|explain|what\s?is|what\s?are)\b", re.I),
-     Intent.HELP,       0.80),
+    
+    (re.compile(r"^/"), COMMAND, 1.00),
 
-    (re.compile(r"\?"),
-     Intent.QUESTION,   0.70),
 
-    (re.compile(r"^/"),
-     Intent.COMMAND,    1.00),
+    (re.compile(r"\b(hi|hello|hey)\b", re.I), GREETING, 0.95),
+    (re.compile(r"\b(bye|goodbye|see you)\b", re.I), FAREWELL, 0.95),
 
-    (re.compile(r"\b(thanks|thank\s?you|cheers|great|cool|nice)\b", re.I),
-     Intent.SMALL_TALK, 0.75),
+    
+    (re.compile(r"\b(order status|track order|where is my order|delivery status)\b", re.I),
+     ORDER_STATUS, 0.95),
+
+   
+    (re.compile(r"\b(refund|money back|return my money)\b", re.I),
+     REFUND_REQUEST, 0.95),
+
+   
+    (re.compile(r"\b(cancel order|cancel my order)\b", re.I),
+     CANCEL_ORDER, 0.95),
+
+    
+    (re.compile(r"\b(bad|worst|not working|issue|problem|late|delay|damaged)\b", re.I),
+     COMPLAINT, 0.80),
+
+   
+    (re.compile(r"\b(manager|human|support agent|talk to someone|complaint escalate)\b", re.I),
+     ESCALATION, 0.90),
+
+  
+    (re.compile(r"\b(help|how to|what can you do)\b", re.I),
+     HELP, 0.80),
+
+    
+    (re.compile(r"\b(thanks|thank you|great|nice)\b", re.I),
+     SMALL_TALK, 0.70),
 ]
 
 
-def classify_intent(text: str) -> IntentResult:
+
+def classify(text: str) -> IntentResult:
     text = text.strip()
-    for pattern, intent, confidence in _PATTERNS:
+
+    for pattern, intent, confidence in PATTERNS:
         if pattern.search(text):
-            return IntentResult(
-                intent=intent,
-                confidence=confidence,
-                raw_input=text,
-            )
-    return IntentResult(intent=Intent.UNKNOWN, confidence=0.5, raw_input=text)
+            return {
+                "intent": intent,
+                "confidence": confidence,
+                "raw_input": text,
+            }
+
+    return {
+        "intent": UNKNOWN,
+        "confidence": 0.5,
+        "raw_input": text,
+    }
 
 
 def is_command(text: str) -> bool:
